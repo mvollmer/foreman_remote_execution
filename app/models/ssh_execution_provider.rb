@@ -31,15 +31,18 @@ class SSHExecutionProvider < RemoteExecutionProvider
       if proxy == :not_defined && Setting['remote_execution_without_proxy']
         proxy = :direct
       end
-      {
+      params = {
         :hostname => find_ip_or_hostname(host),
         :proxy => proxy.class == Symbol ? proxy : proxy.url,
         :ssh_user => ssh_user(host),
         :ssh_port => ssh_port(host),
         :ssh_password => ssh_password(host),
-        :ssh_key_passphrase => ssh_key_passphrase(host),
-        :ssh_key_file => File.expand_path(ForemanRemoteExecutionCore.settings.fetch(:ssh_identity_key_file))
+        :ssh_key_passphrase => ssh_key_passphrase(host)
       }
+      if proxy == :direct
+        params[:ssh_key_file] = File.expand_path(ForemanRemoteExecutionCore.settings.fetch(:ssh_identity_key_file))
+      end
+      return params
     end
 
     private
