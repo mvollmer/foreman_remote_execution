@@ -28,6 +28,9 @@ class SSHExecutionProvider < RemoteExecutionProvider
     def ssh_params(host)
       proxy_selector = ::RemoteExecutionProxySelector.new
       proxy = proxy_selector.determine_proxy(host, 'SSH')
+      if proxy == :not_defined && Setting['remote_execution_without_proxy']
+        proxy = :direct
+      end
       {
         :hostname => find_ip_or_hostname(host),
         :proxy => proxy.class == Symbol ? proxy : proxy.url,
