@@ -28,6 +28,18 @@ module Api
         process_response @remote_execution_feature.update_attributes(remote_execution_feature_params)
       end
 
+      def cockpit_redirect
+        return head(:forbidden) unless params[:redirect_uri]
+        redir_url = URI.parse(params[:redirect_uri])
+        cockpit_url = URI.join(Setting[:foreman_url], Setting[:remote_execution_cockpit_href])
+        redir_url.query = if redir_url.hostname == cockpit_url.hostname
+                            "access_token=#{request.session_options[:id]}"
+                          else
+                            "error_description=Sorry"
+                          end
+        redirect_to(redir_url.to_s)
+      end
+
       private
 
       def parent_scope

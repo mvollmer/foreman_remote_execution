@@ -84,6 +84,8 @@ Rails.application.routes.draw do
         get 'hosts/:id/ssh_params', to: 'hosts#ssh_params'
       end
 
+      get 'cockpit_redirect', to: 'remote_execution_features#cockpit_redirect'
+
     end
   end
 end

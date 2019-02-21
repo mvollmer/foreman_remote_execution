@@ -20,9 +20,16 @@ module ForemanRemoteExecution
       link_to(_('Schedule Remote Job'), new_job_invocation_path(:host_ids => [args.first.id]), :id => :run_button, :class => 'btn btn-default')
     end
 
+    def web_console_button(href, *args)
+      link_to(_('Web Console'), href + "/=" + args.first.name, :class => 'btn btn-default')
+    end
+
     def host_title_actions(*args)
-      title_actions(button_group(schedule_job_multi_button(*args)))
+      cockpit_href = Setting[:remote_execution_cockpit_href]
+      title_actions(button_group(schedule_job_multi_button(*args)),
+                    cockpit_href && cockpit_href != "" ? button_group(web_console_button(cockpit_href, *args)) : nil)
       super(*args)
     end
   end
+
 end
